@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">matchGAme</string>
+    <string name="app_name">Match Game</string>
+    <string name="desc">matchgame square</string>
+    <string name="play">Play</string>
+    <string name="playAgain">Play Again</string>
+    <string name="quit">Quit</string>
 </resources>

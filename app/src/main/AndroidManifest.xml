@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MatchGAme">
         <activity
+            android:name=".ScoreActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity2"
             android:exported="false" />
         <activity
