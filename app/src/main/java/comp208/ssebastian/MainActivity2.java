@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TableLayout;
@@ -26,6 +27,7 @@ public class MainActivity2 extends AppCompatActivity {
     int firstId ;
     int indexOfCard =0;
     boolean turnOver = false;
+    ImageView currentImage ;
 
 
 
@@ -66,6 +68,7 @@ public class MainActivity2 extends AppCompatActivity {
                 Card square = new Card();
 
                 square.imageId = R.drawable.backface;
+                square.firstId = R.drawable.backface;
                 square.row=row;
                 square.col=col;
                 matchGrid[row][col]=square;
@@ -134,10 +137,10 @@ public class MainActivity2 extends AppCompatActivity {
 
 //            Toast.makeText(MainActivity.this, "Id: "+getResources().getResourceEntryName(iv.getId()), Toast.LENGTH_LONG).show();
 
+            //square.firstId = R.drawable.backface;
 
 
-
-            if (square.imageId == R.drawable.backface && !turnOver) {
+            if (square.imageId == R.drawable.backface && cardClick<2) {
 
                 iv.setImageResource(Integer.parseInt(imageList.get(indexOfCard)));
                 iv.setContentDescription(imageList.get(indexOfCard));
@@ -159,14 +162,16 @@ public class MainActivity2 extends AppCompatActivity {
                 iv.setContentDescription("backFace");
                 square.imageId = R.drawable.backface;
                 turnOver = false;
-                card.guess++;
+
                 cardClick--;
 
             }
-            //     Toast.makeText(MainActivity.this, "Click "+cardClick , Toast.LENGTH_LONG).show();
+              //  Toast.makeText(MainActivity2.this, "Click "+cardClick , Toast.LENGTH_LONG).show();
             if (cardClick == 2) {
                 turnOver = true;
+                card.guess++;
                 setClickable(iv,firstId);
+                cardClick=0;
 
 
             }
@@ -176,14 +181,18 @@ public class MainActivity2 extends AppCompatActivity {
     public void setClickable(View view, int firstId){
 
         ImageView iv = (ImageView) view;
+        currentImage = iv;
         if (iv.getContentDescription().equals(card.firstCardContent)) {
-            Toast.makeText(MainActivity2.this, "entered this loop "+getString(firstId), Toast.LENGTH_SHORT).show();
+           // Toast.makeText(MainActivity2.this, "entered this loop "+getString(firstId), Toast.LENGTH_SHORT).show();
             iv.setEnabled(false);
             ImageView firstCardImage = findViewById(firstId);
             firstCardImage.setEnabled(false);
             turnOver = false;
             cardClick = 0;
             gameOver++;
+        }else if(iv.getContentDescription()!=(card.firstCardContent)){
+
+            turnCardsDown();
         }
 
         if(gameOver ==6){
@@ -192,11 +201,39 @@ public class MainActivity2 extends AppCompatActivity {
 
     }
 
+    Handler flipCardHandler = new Handler();
+
     public  void switchToScore()
     {
         Intent intent = new Intent(this,ScoreActivity.class);
         String guessMade = "guess made: "+ card.guess;
       intent.putExtra("guess",guessMade);
-        startActivity(intent);
+        startActivityForResult(intent,1);
+    }
+
+    Runnable flip = () ->{
+        currentImage.setImageResource(R.drawable.backface);
+        Card square = (Card) currentImage.getTag();
+
+        currentImage.setContentDescription("backFace");
+        square.imageId = R.drawable.backface;
+
+        ImageView firstCardImage = findViewById(firstId);
+        firstCardImage.setImageResource(R.drawable.backface);
+        firstCardImage.setContentDescription("backFace");
+        card.firstCardContent=currentImage.getContentDescription();
+        Card firstCardTag = (Card) firstCardImage.getTag();
+
+        firstCardTag.imageId = R.drawable.backface;
+
+
+
+    };
+
+    public void turnCardsDown(){
+
+        flipCardHandler.postDelayed(flip,500);
+
+
     }
 }
